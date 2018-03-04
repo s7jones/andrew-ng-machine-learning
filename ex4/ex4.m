@@ -18,6 +18,8 @@
 %% Initialization
 clear ; close all; clc
 
+addpath(genpath('..'));
+
 %% Setup the parameters you will use for this exercise
 input_layer_size  = 400;  % 20x20 Input Images of Digits
 hidden_layer_size = 25;   % 25 hidden units

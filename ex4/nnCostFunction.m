@@ -72,7 +72,13 @@ for k = 1:num_labels
 
 end
 
-J = J + (lambda / (2 * m)) * (sumsqr(Theta1(:,2:end)) + sumsqr(Theta2(:,2:end)));
+if (isOctave)
+  f = @sumsqr_octave;
+else
+  f = @sumsqr;
+end
+
+J = J + (lambda / (2 * m)) * (f(Theta1(:,2:end)) + f(Theta2(:,2:end)));
 
 for t = 1:m
    
