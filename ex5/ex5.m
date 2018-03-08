@@ -218,3 +218,79 @@ end
 
 fprintf('Program paused. Press enter to continue.\n');
 pause;
+
+%% ungraded Section 3.4 - Computing test set error
+
+fprintf('Entering ungraded section');
+
+lambda = 3;
+training_lambda = 0;
+theta = trainLinearReg(X_poly, y, lambda);
+
+error_test = linearRegCostFunction(X_poly_test, ytest, theta, training_lambda);
+
+fprintf('test error of %f for lambda = %f\n', error_test, lambda);
+
+fprintf('Program paused. Press enter to continue.\n');
+pause;
+
+%% ungraded Section 3.5 - PLotting learning curves with randomly selected examples
+
+fprintf('Entering ungraded section');
+
+ntrials = 50;
+lambda = 0.01;
+
+error_train = [];
+error_val = [];
+
+X_poly_all = [X_poly; X_poly_val; X_poly_test];
+y_all = [y; yval; ytest];
+
+assert(size(X_poly_all,1) == size(y_all,1));
+
+data_size = size(X_poly_all,1);
+sample_train_size = round(data_size * 0.5); % first 50%
+sample_cv_size = round(data_size * 0.25); % next 25%
+
+for i=1:ntrials
+
+sample = randperm(data_size);
+
+sample_train_elements = sample(1:sample_train_size);
+sample_cv_elements = sample(sample_train_size+1:sample_train_size+sample_cv_size);
+    
+X_train_random = X_poly_all(sample_train_elements, :);
+y_train_random = y_all(sample_train_elements, :);
+
+X_cv_random = X_poly_all(sample_cv_elements, :);
+y_cv_random = y_all(sample_cv_elements, :);
+
+[error_train_trial, error_val_trial] = ...
+    learningCurve(X_train_random, y_train_random, X_cv_random, y_cv_random, lambda);
+error_train(:,i) = error_train_trial;
+error_val(:,i) = error_val_trial;
+end
+
+error_train = mean(error_train,2);
+error_val = mean(error_val,2);
+
+figure(1);
+
+m = size(X_train_random, 1);
+plot(1:m, error_train, 1:m, error_val);
+
+title(sprintf('Averaged Polynomial Regression Learning Curve (lambda = %f)', lambda));
+xlabel('Number of training examples')
+ylabel('Averaged Error')
+axis([0 13 0 100])
+legend('Train', 'Cross Validation')
+
+fprintf('Polynomial Regression (lambda = %f)\n\n', lambda);
+fprintf('# Training Examples\tTrain Error\tCross Validation Error\n');
+for i = 1:m
+    fprintf('  \t%d\t\t%f\t%f\n', i, error_train(i), error_val(i));
+end
+
+fprintf('Program paused. Press enter to continue.\n');
+pause;
